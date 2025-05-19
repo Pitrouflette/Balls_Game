@@ -7,6 +7,7 @@ from mido import MidiFile
 IMAGE = False
 MUSIC_ON = False
 NAMES = ["YES", "NO"]
+QUESTION = ""
 MUSIC = "Wii"
 COLORS = [(0, 0, 255), (0, 255, 0)]
 FPS = 60
@@ -127,7 +128,7 @@ class Circle:
         distance = math.sqrt((WIDTH // 2 - ball.x) ** 2 + (HEIGHT // 2 - ball.y) ** 2)
         ball_angle = math.atan2(ball.y - HEIGHT // 2, ball.x - WIDTH // 2)
 
-        if abs(distance - self.radius) <= BALL_RADIUS + 5:
+        if abs(distance - self.radius) <= BALL_RADIUS:
             if self.start_angle < ball_angle < self.end_angle:
                 self.broken = True
                 ball.score += 1
@@ -136,17 +137,15 @@ class Circle:
                 return True
 
             direction = (ball.x - WIDTH // 2, ball.y - HEIGHT // 2)
-            magnitude = math.sqrt(direction[0] ** 2 + direction[1] ** 2)
 
-            if magnitude > 0:
-                normale = (direction[0] / magnitude, direction[1] / magnitude)
-                vitesse = (ball.vx, ball.vy)
-                dot_product = vitesse[0] * normale[0] + vitesse[1] * normale[1]
-                ball.vx = vitesse[0] - 2 * dot_product * normale[0]
-                ball.vy = vitesse[1] - 2 * dot_product * normale[1]
-                if MUSIC_ON:midi_player.play_next()
-                else:bounce_sound.play()
-                return True
+            normale = (direction[0] / distance, direction[1] / distance)
+            vitesse = (ball.vx, ball.vy)
+            dot_product = vitesse[0] * normale[0] + vitesse[1] * normale[1]
+            ball.vx = vitesse[0] - 2 * dot_product * normale[0]
+            ball.vy = vitesse[1] - 2 * dot_product * normale[1]
+            if MUSIC_ON:midi_player.play_next()
+            else:bounce_sound.play()
+            return True
 
         return False
 
